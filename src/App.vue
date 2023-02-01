@@ -2,29 +2,63 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import TextInput from './components/TextInput.vue'
-import axios from "axios"
+import axios from 'axios'
 
 let form = {
-  email:"",
-  password:"",
-  phone:"9774978068",
-  name:"asd"
+  name: 'John',
+  phone: '3213213211',
+  email: 'jpachuau21@gmail.com',
+  password: '1231231231'
 }
 
-function login(){
-  console.log(form)
-  axios.post("http://localhost:8000/webapi/register",form).then(res => console.log(res)).catch(err=>console.log)
+function login () {
+  let bearer = localStorage.getItem('token')
+  if (bearer) {
+    axios.defaults.headers.common["Authorization"] = "Bearer " + bearer
+    axios.defaults.headers.common["Accept"] = "*/*"
+    axios.post(
+      'http://localhost:8000/webapi/user',
+   
+    )
+      .then(console.log)
+      .catch(console.log)
+  } else
+    axios
+      .get('http://localhost:8000/sanctum/csrf-cookie', form)
+      .then(response => {
+        axios
+          .post('http://localhost:8000/webapi/login', {
+            name: 'John',
+            phone: '3213213211',
+            email: 'jpachuau21@gmail.com',
+            password: '1231231231'
+          })
+          .then(res => {
+            localStorage.setItem('token', res.data.token)
+            console.log(res.data.token)
+          })
+      })
 }
-
 </script>
 <template>
   <div
-    class="bg-red-600 flex items-center justify-center minHeighWidthtMax relative "
-  
-  > <div class="absolute" style="border-radius:50%;padding:10rem;background:white;filter:blur(2px);top:10vh;left:50vw"></div>
-    <div class="flex items-center justify-center bg-white p-11 rounded-md backdrop ">
-     
-      <div class="p-5 bg-white rounded-md mainCard " style="background:none">
+    class="bg-red-600 flex items-center justify-center minHeighWidthtMax relative"
+  >
+    <div
+      class="absolute"
+      style="
+        border-radius: 50%;
+        padding: 10rem;
+        background: white;
+        filter: blur(2px);
+        top: 10vh;
+        left: 50vw;
+      "
+    ></div>
+    <div
+      class="flex items-center justify-center bg-white p-11 rounded-md backdrop"
+    >
+      <div class="p-5 bg-white rounded-md mainCard" style="background: none">
         <div class="section">
           <div class="container">
             <div class="row full-height justify-content-center">
@@ -53,36 +87,34 @@ function login(){
                               Log In
                             </h4>
                             <form @submit.prevent="login()">
-                            <div class="form-group relative" >
-                             
-                              <input
-                                type="email"
-                                name="logemail"
-                                class="form-style text-2xl"
-                                placeholder="Your Email"
-                                id="logemail"
-                              
-                                required
-                                autocomplete="off"
-                                v-model="form.email"
-                              />
-                              <i class="input-icon uil uil-at"></i>
-                            </div>
-                            <div class="form-group mt-2">
-                              <input
-                                type="password"
-                                name="logpass"
-                                required
-                                class="form-style"
-                                v-model="form.password"
-                                placeholder="Your Password"
-                                id="logpass"
-                                autocomplete="off"
-                              />
-                              <i class="input-icon uil uil-lock-alt"></i>
-                            </div>
-                            <button class="btn mt-4">submit</button>
-                          </form>
+                              <div class="form-group relative">
+                                <input
+                                  type="email"
+                                  name="logemail"
+                                  class="form-style text-2xl"
+                                  placeholder="Your Email"
+                                  id="logemail"
+                                  required
+                                  autocomplete="off"
+                                  v-model="form.email"
+                                />
+                                <i class="input-icon uil uil-at"></i>
+                              </div>
+                              <div class="form-group mt-2">
+                                <input
+                                  type="password"
+                                  name="logpass"
+                                  required
+                                  class="form-style"
+                                  v-model="form.password"
+                                  placeholder="Your Password"
+                                  id="logpass"
+                                  autocomplete="off"
+                                />
+                                <i class="input-icon uil uil-lock-alt"></i>
+                              </div>
+                              <button class="btn mt-4">submit</button>
+                            </form>
                             <p class="mb-0 mt-4 text-center">
                               <a href="#0" class="link"
                                 >Forgot your password?</a
